@@ -1,14 +1,4 @@
 from gensim.models import Word2Vec
-import time
-
-# model = Word2Vec.load('first.model')
-
-# model.predict_output_word(['making', 'somebody', 'question'])
-# happy = model['happy']
-# print(happy)
-
-# print(model.most_similar(positive=['chimp', 'smart'], negative=[], topn=10))
-# print(model.similarity('dog', ))
 
 
 def load_model(filename):
@@ -28,7 +18,17 @@ def song2matrix(lyrics, model):
             wvec = model[word]
         except KeyError:
             print('irrelevant word for the matrix')
-            continue
+            return []
         mat.append(wvec)
 
     return mat
+
+
+# def words2matrix(words, model):
+#     """
+#     :param words:
+#     :param model:
+#     :return:
+#     """
+#
+#     mat = []

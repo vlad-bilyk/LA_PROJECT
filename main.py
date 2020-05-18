@@ -1,37 +1,62 @@
-from model_use import *
-from data_funcs import *
+from model_funcs import *
+from newdata_funcs import *
 from algebra import *
+import pandas as pd
+
+# df = pd.read_csv('songs.csv', delimiter=',')
 
 model = load_model('first.model')
 
-songs = get_all_lyrics()
+songs = get_all_songs()
 
-# s1 = get_lyrics_by_name('Merry Christmas Baby')
-# print(s1)
+n = 15  # number of words for matrix
 
-
-s1 = songs[3056]
-s2 = songs[15112]
-
-s3 = songs[475]
-
-m1 = song2matrix(s1, model)
-m2 = song2matrix(s2, model)
-
-m3 = song2matrix(s3, model)
-
-# d = mat_dist_sq(m1, m2)
-# d_big = mat_dist_sq(m1, m3)
-# d_big1 = mat_dist_sq(m2, m3)
+# s1 = most_freq_words(songs[3056], n)
 #
-# print(d)
-# print(d_big)
-# print(d_big1)
+# m1 = song2matrix(s1, model)
+#
+# distances = []
+#
+# c = 0
+# for text in songs:
+#     if len(text) == 0:
+#         continue
+#     if c > 5000:
+#         break
+#     print(c)
+#     m = song2matrix(text, model)
+#     d = mat_dist_sq(m1, m)
+#     distances.append(d)
+#     c += 1
+#
+# recommended = []
+#
+# for i in range(10):
+#     mind_ind = distances.index(min(distances))
+#     recommended.append(mind_ind)
+#     del distances[mind_ind]
+#
+# print("recommendations for :{}".format((df.band[3056], df.name[3056])))
+# print([(df.band[i], df.name[i]) for i in recommended])
+#
+#
+# c = 0
+# ind = 0
+# indexes = []
+# for s in songs:
+#     freq_w = most_freq_words(s, 10)
+#     m = song2matrix(freq_w, model)
+#     if len(m) == 0:
+#         # print(c)
+#         c += 1
+#         indexes.append(ind)
+#     ind += 1
+# print(c)
 
-d = mat_dist_abs(m1, m2)
-d_big = mat_dist_abs(m1, m3)
-d_big1 = mat_dist_abs(m2, m3)
-
-print(d)
-print(d_big)
-print(d_big1)
+# df = pd.read_csv('songs_lem.csv', delimiter=',')
+# print(len(df))
+#
+# df = df.drop(indexes)
+# print(len(df))
+#
+# df.to_csv('songs_lem_relevant.csv', index=False)

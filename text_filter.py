@@ -3,9 +3,17 @@ from nltk.corpus import words
 eng_words = set(words.words())
 stop_words = set(stopwords.words('english'))
 stop_words.add("im")
+stop_words.add('shes')
+stop_words.add('hes')
+stop_words.add('youre')
+stop_words.add('theyre')
+stop_words.add('its')
+stop_words.add('heres')
+stop_words.add('theres')
+stop_words.add('thats')
 
 to_remove = ["?", "!", ".", ",", ":", ";", "'", "\"", "&", "$", "%", "*", "-"]
-brackets = ["(", "[", "{"]
+brackets = ["(", ")", "[", "]", "{", "}"]
 
 
 def filter_lyrics(text):
