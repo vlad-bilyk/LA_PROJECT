@@ -1,5 +1,7 @@
 from gensim.models import Word2Vec
 import time
+import numpy as np
+
 
 # model = Word2Vec.load('first.model')
 
@@ -27,7 +29,6 @@ def song2matrix(lyrics, model):
         try:
             wvec = model[word]
         except KeyError:
-            print('irrelevant word for the matrix')
             continue
         mat.append(wvec)
 

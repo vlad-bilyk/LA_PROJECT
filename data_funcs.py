@@ -1,7 +1,6 @@
 import pandas as pd
 from text_funcs import filter_lyrics
 
-
 df = pd.read_csv('songs.csv', delimiter=',')
 
 
@@ -23,6 +22,12 @@ def get_all_lyrics():
     return songs_lyrics
 
 
+def get_all_info():
+    result = []
+    for i in range(len(df.band)):
+        result.append((df.band[i], df.name[i]))
+    return result
+
 def get_lyrics_by_name(song_name):
     return df.lyrics[df.name == song_name]
 
@@ -30,7 +35,4 @@ def get_lyrics_by_name(song_name):
 def get_lyrics_by_index(ind):
     return df.loc[ind, 'lyrics']
 
-
 # def get_lyrics(n)
-
-
