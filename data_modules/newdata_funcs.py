@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('data/songs_lem_relevant.csv', delimiter=',')
+df = pd.read_csv('../data/songs_lem_relevant.csv', delimiter=',')
 
 
 def get_df():
