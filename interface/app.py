@@ -15,7 +15,6 @@ radio_text = []
 
 check_vars = []
 check_buttons = []
-# check_text = []
 chosen_bands = []
 
 curr_band_songs = []
@@ -24,37 +23,72 @@ curr_band_index = 0
 
 def submit_check():
     boxes_status = [i.get() for i in check_vars]  # true or false list
-    # chosen = []
-    # chosen = [text for box, text in zip(boxes_status, check_text) if box]
+
     for box, text in zip(boxes_status, check_text):
         if box:
             chosen_bands.append(text)
-    # for box, text in zip(boxes_status, check_text):
-    #     if box:
-    #         chosen.append(text)
-
-
-# def next_band():
 
 
 def submit_radio():
     global radio_text, curr_band_songs, curr_band_index, lbl
-    # print(radio_text)
-    # print(int(radio_var.get()))
+
     if radio_var.get() < 10 and len(chosen_songs) < len(chosen_bands):
         chosen_songs.append(radio_text[int(radio_var.get())])
+
     print(chosen_songs)
 
     if len(chosen_songs) < len(chosen_bands):
-        # go to next band's songs
+
         destroy_radio_buttons()
         lbl.destroy()
+
         curr_band_songs = get_band_songs(chosen_bands[curr_band_index + 1])
         curr_band_index += 1
+
         radio_text = get_next_songs(curr_band_songs)
         create_radio_buttons(radio_text)
         lbl = Label(window, text="Choose one song of {}".format(chosen_bands[curr_band_index]))
         lbl.grid(column=2, row=1)
+    else:
+        show_results()
+
+
+def show_results():
+    submit_btn.destroy()
+    destroy_radio_buttons()
+    lbl.destroy()
+
+    t1 = 'Based on your taste:'
+    for b, s in zip(chosen_bands, chosen_songs):
+        t1 += "\n{} - {}".format(b, s)
+
+    final_lbl = Label(window, text=t1)
+    final_lbl.grid(column=4, row=4)
+
+    model = load_model('../data/first.model')
+
+    lyrics = []
+
+    for b, s in zip(chosen_bands, chosen_songs):
+        print(b, s)
+        artist = df[df.band == b]
+        song = artist[df.name == s]
+        lyr = song.lyrics.item().split(';')
+        lyrics.append(song2matrix(most_freq_words(lyr), model))
+
+    final_matrix = []
+
+    for mat in lyrics:
+        final_matrix = add_matices(final_matrix, mat)
+
+    songs_recommended = ""
+    for i in get_recommendations(final_matrix, model):
+        songs_recommended += get_band(i) + " - " + get_name(i) + "\n"
+
+    t2 = "Recommended songs are:\n" + songs_recommended
+
+    final_lbl = Label(window, text=t2)
+    final_lbl.grid(column=4, row=10)
 
 
 def reroll_songs():
@@ -69,9 +103,8 @@ def reroll_songs():
         return
     else:
         radio_text = curr_band_songs
-    create_radio_buttons(radio_text)
 
-    # reroll_songs_btn.grid(column=10, row=10)
+    create_radio_buttons(radio_text)
 
 
 def reroll_bands():
@@ -82,7 +115,7 @@ def reroll_bands():
 
 
 def go_to_songs():
-    global curr_band_songs, radio_text, reroll_songs_btn
+    global curr_band_songs, radio_text
 
     destroy_all_buttons_check()
 
@@ -97,8 +130,11 @@ def go_to_songs():
     submit_btn = Button(window, text="Submit", command=submit_radio)
     submit_btn.grid(column=30, row=20)
 
+    reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
+    reroll_songs_btn.grid(column=40, row=30)
+
     # reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
-    # reroll_songs_btn.grid(column=10, row=10)
+
 
     # next_band_btn = Button(window, text="Next band", command=next_band)
     # next_band_btn.grid(column=70, row=15)
@@ -181,7 +217,7 @@ reroll_btn.grid(column=10, row=10)
 go_to_songs_btn = Button(window, text='Choose songs', command=go_to_songs)
 go_to_songs_btn.grid(column=10, row=15)
 
-reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
+# reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
 
 
 window.mainloop()

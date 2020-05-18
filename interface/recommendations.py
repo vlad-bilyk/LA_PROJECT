@@ -19,5 +19,5 @@ def get_recommendations(song_matrix, model, n=10):
 
         lst.append(algebra.mat_dist_sq(mat, song_matrix))
 
-    top15 = [lst.index(i) for i in sorted(lst)[:10]]
-    return top15
+    top10 = [lst.index(i) for i in sorted(lst)[:10]]
+    return top10
