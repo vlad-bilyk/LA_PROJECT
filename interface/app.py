@@ -257,7 +257,7 @@ submit_btn.place(x=600, y=350)
 
 
 reroll_btn = Button(window, text='Reroll bands', command=reroll_bands)
-reroll_btn.place(x=900, y=150)
+reroll_btn.place(x=200, y=350)
 
 go_to_songs_btn = Button(window, text='Choose songs', command=go_to_songs)
 go_to_songs_btn.place(x=900, y=350)
