@@ -1,4 +1,7 @@
+import threading
 from tkinter import *
+from tkinter.ttk import Progressbar
+
 from interface.commands import *
 
 
@@ -19,6 +22,8 @@ chosen_bands = []
 
 curr_band_songs = []
 curr_band_index = 0
+
+reroll_songs_btn = None
 
 
 def submit_check():
@@ -54,41 +59,62 @@ def submit_radio():
 
 
 def show_results():
-    submit_btn.destroy()
-    destroy_radio_buttons()
-    lbl.destroy()
 
-    t1 = 'Based on your taste:'
-    for b, s in zip(chosen_bands, chosen_songs):
-        t1 += "\n{} - {}".format(b, s)
+    def work():
+        submit_btn.destroy()
+        reroll_songs_btn.destroy()
+        destroy_radio_buttons()
+        lbl.destroy()
 
-    final_lbl = Label(window, text=t1)
-    final_lbl.grid(column=4, row=4)
+        progress_var = DoubleVar()
+        progress = Progressbar(window, variable=progress_var, orient=HORIZONTAL,
+                               length=100, mode='determinate')
+        progress.grid(column=10, row=15)
 
-    model = load_model('../data/first.model')
+        time.sleep(5)
 
-    lyrics = []
+        # window.update_idletasks()
 
-    for b, s in zip(chosen_bands, chosen_songs):
-        print(b, s)
-        artist = df[df.band == b]
-        song = artist[df.name == s]
-        lyr = song.lyrics.item().split(';')
-        lyrics.append(song2matrix(most_freq_words(lyr), model))
+        model = load_model('../data/first.model')
 
-    final_matrix = []
+        lyrics = []
 
-    for mat in lyrics:
-        final_matrix = add_matices(final_matrix, mat)
+        for b, s in zip(chosen_bands, chosen_songs):
+            print(b, s)
+            artist = df[df.band == b]
+            song = artist[df.name == s]
+            lyr = song.lyrics.item().split(';')
+            lyrics.append(song2matrix(most_freq_words(lyr), model))
 
-    songs_recommended = ""
-    for i in get_recommendations(final_matrix, model):
-        songs_recommended += get_band(i) + " - " + get_name(i) + "\n"
+        final_matrix = []
 
-    t2 = "Recommended songs are:\n" + songs_recommended
+        for mat in lyrics:
+            final_matrix = add_matices(final_matrix, mat)
 
-    final_lbl = Label(window, text=t2)
-    final_lbl.grid(column=4, row=10)
+        songs_recommended = ""
+        for i in get_recommendations(final_matrix, model, pvar=progress_var, window=window):
+            songs_recommended += get_band(i) + " - " + get_name(i) + "\n"
+
+        t1 = 'Based on your taste:'
+        for b, s in zip(chosen_bands, chosen_songs):
+            t1 += "\n{} - {}".format(b, s)
+
+        final_lbl = Label(window, text=t1)
+        final_lbl.grid(column=4, row=4)
+
+        t2 = "Recommended songs are:\n" + songs_recommended
+
+        final_lbl = Label(window, text=t2)
+        final_lbl.grid(column=4, row=10)
+
+        progress.stop()
+        done_lbl = Label(window, text="Done! 100%")
+        done_lbl.grid(column=11, row=17)
+
+        print("Done!")
+
+    t = threading.Thread(target=work)
+    t.start()
 
 
 def reroll_songs():
@@ -115,7 +141,7 @@ def reroll_bands():
 
 
 def go_to_songs():
-    global curr_band_songs, radio_text
+    global curr_band_songs, radio_text, submit_btn, reroll_songs_btn
 
     destroy_all_buttons_check()
 
@@ -217,12 +243,5 @@ reroll_btn.grid(column=10, row=10)
 go_to_songs_btn = Button(window, text='Choose songs', command=go_to_songs)
 go_to_songs_btn.grid(column=10, row=15)
 
-# reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
-
 
 window.mainloop()
-
-#
-# from tkinter.ttk import Progressbar
-#
-# bar = Progressbar(window, length=200)

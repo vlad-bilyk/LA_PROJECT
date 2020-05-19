@@ -36,6 +36,8 @@ def get_next_songs(band_songs):
 #     return chosen_songs
 
 
+
+
 if __name__ == "__main__":
     print(len(bands))
     print(get_next_bands())
