@@ -5,8 +5,8 @@ import time
 def get_recommendations(song_matrix, model, n=10, pvar=None, window=None):
     songs = newdata_funcs.get_all_songs()
     # my_song = model_funcs.song2matrix(newdata_funcs.most_freq_words(songs[song_index], n), model)
-    total = len(songs)
-    # total = 3000
+    # total = len(songs)
+    total = 3000
     step = 1000
 
     lst = []

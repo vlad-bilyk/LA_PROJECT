@@ -80,8 +80,11 @@ def show_results():
 
         progress_var = DoubleVar()
         progress = Progressbar(window, variable=progress_var, orient=HORIZONTAL,
-                               length=100, mode='determinate')
-        progress.place(x=600, y=350)
+                               length=250, mode='determinate')
+        progress.place(x=500, y=270)
+
+        progress_lbl = Label(window, text="Loading...")
+        progress_lbl.place(x=600, y=315)
 
         time.sleep(5)
 
@@ -112,16 +115,18 @@ def show_results():
             t1 += "\n{} - {}".format(b, s)
 
         final_lbl = Label(window, text=t1)
-        final_lbl.place(x=200, y=350)
+        final_lbl.place(x=850, y=100)
 
         t2 = "\n\nRecommended songs are:\n\n" + songs_recommended
 
         final_lbl = Label(window, text=t2)
-        final_lbl.place(x=200, y=500)
+        final_lbl.place(x=850, y=250)
 
         progress.stop()
+        progress_lbl.destroy()
+
         done_lbl = Label(window, text="Done! 100%")
-        done_lbl.place(x=600, y=400)
+        done_lbl.place(x=600, y=315)
 
         print("Done!")
 
