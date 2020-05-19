@@ -254,7 +254,7 @@ def create_check_buttons(text_lst):
 check_text = get_next_bands()
 create_check_buttons(check_text)
 
-lbl = Label(window, text="Choose bands/artist that you listen to (up to 3):", font=BIG_FONT)
+lbl = Label(window, text="Choose bands/artist that you listen to (up to 3)", font=BIG_FONT)
 lbl.place(x=350, y=150)
 
 submit_btn = Button(window, text="Submit", command=submit_check)
