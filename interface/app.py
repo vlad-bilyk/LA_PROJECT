@@ -1,13 +1,16 @@
 import threading
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import Progressbar
 
 from interface.commands import *
 
+BIG_FONT = ("Helvetica", 20)
 
 window = Tk()
 window.geometry('1280x720')
-window.title("Welcome to LikeGeeks app")
+window.title("Music Recommendations ;)")
+window.configure(background='lightblue')
 
 
 radio_var = IntVar()
@@ -24,6 +27,7 @@ curr_band_songs = []
 curr_band_index = 0
 
 reroll_songs_btn = None
+lbl = None
 
 
 def submit_check():
@@ -36,6 +40,9 @@ def submit_check():
 
 def submit_radio():
     global radio_text, curr_band_songs, curr_band_index, lbl
+
+    if radio_var.get() == 10:
+        return
 
     if radio_var.get() < 10 and len(chosen_songs) < len(chosen_bands):
         chosen_songs.append(radio_text[int(radio_var.get())])
@@ -53,7 +60,7 @@ def submit_radio():
         radio_text = get_next_songs(curr_band_songs)
         create_radio_buttons(radio_text)
         lbl = Label(window, text="Choose one song of {}".format(chosen_bands[curr_band_index]))
-        lbl.grid(column=2, row=1)
+        lbl.place(x=200, y=100)
     else:
         show_results()
 
@@ -61,15 +68,19 @@ def submit_radio():
 def show_results():
 
     def work():
+        # global lbl
         submit_btn.destroy()
         reroll_songs_btn.destroy()
         destroy_radio_buttons()
         lbl.destroy()
+        # del lbl
+        # window.update_idletasks()
+
 
         progress_var = DoubleVar()
         progress = Progressbar(window, variable=progress_var, orient=HORIZONTAL,
                                length=100, mode='determinate')
-        progress.grid(column=10, row=15)
+        progress.place(x=600, y=350)
 
         time.sleep(5)
 
@@ -95,21 +106,21 @@ def show_results():
         for i in get_recommendations(final_matrix, model, pvar=progress_var, window=window):
             songs_recommended += get_band(i) + " - " + get_name(i) + "\n"
 
-        t1 = 'Based on your taste:'
+        t1 = 'Based on your taste:\n'
         for b, s in zip(chosen_bands, chosen_songs):
             t1 += "\n{} - {}".format(b, s)
 
         final_lbl = Label(window, text=t1)
-        final_lbl.grid(column=4, row=4)
+        final_lbl.place(x=200, y=350)
 
-        t2 = "Recommended songs are:\n" + songs_recommended
+        t2 = "\n\nRecommended songs are:\n\n" + songs_recommended
 
         final_lbl = Label(window, text=t2)
-        final_lbl.grid(column=4, row=10)
+        final_lbl.place(x=200, y=500)
 
         progress.stop()
         done_lbl = Label(window, text="Done! 100%")
-        done_lbl.grid(column=11, row=17)
+        done_lbl.place(x=600, y=400)
 
         print("Done!")
 
@@ -122,7 +133,7 @@ def reroll_songs():
 
     destroy_radio_buttons()
 
-    if len(curr_band_songs) >= 6:
+    if len(curr_band_songs) > 6:
         radio_text = get_next_songs(curr_band_songs)
     elif len(curr_band_songs) == 0:
         submit_radio()
@@ -143,6 +154,10 @@ def reroll_bands():
 def go_to_songs():
     global curr_band_songs, radio_text, submit_btn, reroll_songs_btn
 
+    if len(chosen_bands) == 0:
+        messagebox.showinfo("Oops...", "You haven't chosen any band")
+        return
+
     destroy_all_buttons_check()
 
     curr_band_songs = get_band_songs(chosen_bands[curr_band_index])
@@ -150,20 +165,18 @@ def go_to_songs():
 
     create_radio_buttons(radio_text)
 
-    lbl = Label(window, text="Choose one song of {}".format(chosen_bands[curr_band_index]))
-    lbl.grid(column=2, row=1)
+    lbl = Label(window, text="Choose one song of {}".format(chosen_bands[curr_band_index]), font=BIG_FONT)
+    lbl.place(x=450, y=150)
 
     submit_btn = Button(window, text="Submit", command=submit_radio)
-    submit_btn.grid(column=30, row=20)
+    submit_btn.place(x=600, y=350)
 
     reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
-    reroll_songs_btn.grid(column=40, row=30)
-
-    # reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
+    reroll_songs_btn.place(x=900, y=150)# reroll_songs_btn = Button(window, text="Rerrol songs", command=reroll_songs)
 
 
     # next_band_btn = Button(window, text="Next band", command=next_band)
-    # next_band_btn.grid(column=70, row=15)
+    # next_band_btn.place(column=70, row=15)
 
     # reroll songs for current band
 
@@ -201,47 +214,53 @@ def destroy_radio_buttons():
 
 
 def create_radio_buttons(text_lst):
-    col = 10
+    x = 150
+    y = 250
     value = 0
     for i in range(len(text_lst)):
+        curr_text = text_lst[i]
 
-        rb = Radiobutton(window, text=text_lst[i], variable=radio_var, value=value)
-        rb.grid(column=col, row=10)
+        rb = Radiobutton(window, text=curr_text, variable=radio_var, value=value)
+        if i == len(text_lst) / 2:
+            x = 150
+            y = 300
+        rb.place(x=x, y=y)
         radio_buttons.append(rb)
 
-        col += 5
+        x += 35 + (len(curr_text) * 8)
         value += 1
 
 
 def create_check_buttons(text_lst):
-    col = 1
+    x = 150
     for i in range(len(text_lst)):
         var = BooleanVar()
         var.set(False)
         check_vars.append(var)
+        curr_text = text_lst[i]
 
-        c = Checkbutton(window, text=text_lst[i], variable=var, onvalue=True, offvalue=False)
-        c.grid(column=col, row=2)
+        c = Checkbutton(window, text=curr_text, variable=var, onvalue=True, offvalue=False)
+        c.place(x=x, y=250)
         check_buttons.append(c)
 
-        col += 1
+        x += 35 + (len(curr_text) * 8)
 
 
 check_text = get_next_bands()
 create_check_buttons(check_text)
 
-lbl = Label(window, text="Choose bands/artist that you listent to:")
-lbl.grid(column=2, row=1)
+lbl = Label(window, text="Choose bands/artist that you listen to (up to 3):", font=BIG_FONT)
+lbl.place(x=450, y=150)
 
 submit_btn = Button(window, text="Submit", command=submit_check)
-submit_btn.grid(column=3, row=3)
+submit_btn.place(x=600, y=350)
 
 
 reroll_btn = Button(window, text='Reroll bands', command=reroll_bands)
-reroll_btn.grid(column=10, row=10)
+reroll_btn.place(x=900, y=150)
 
 go_to_songs_btn = Button(window, text='Choose songs', command=go_to_songs)
-go_to_songs_btn.grid(column=10, row=15)
+go_to_songs_btn.place(x=900, y=350)
 
 
 window.mainloop()
