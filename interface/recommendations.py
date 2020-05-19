@@ -2,6 +2,7 @@ from data_modules import newdata_funcs
 from calc_modules import algebra, model_funcs
 import time
 
+
 def get_recommendations(song_matrix, model, n=10, pvar=None, window=None):
     songs = newdata_funcs.get_all_songs()
     # my_song = model_funcs.song2matrix(newdata_funcs.most_freq_words(songs[song_index], n), model)
@@ -19,7 +20,6 @@ def get_recommendations(song_matrix, model, n=10, pvar=None, window=None):
                 pvar.set((i / total) * 100)
                 window.update_idletasks()
 
-
         arr = newdata_funcs.most_freq_words(songs[i], n)
         mat = model_funcs.song2matrix(arr, model)
 
@@ -29,6 +29,7 @@ def get_recommendations(song_matrix, model, n=10, pvar=None, window=None):
 
         lst.append(algebra.mat_dist_sq(mat, song_matrix))
 
+    list(filter((0).__ne__, lst))
     top10 = [lst.index(i) for i in sorted(lst)[:10]]
     pvar.set(100)
     return top10
