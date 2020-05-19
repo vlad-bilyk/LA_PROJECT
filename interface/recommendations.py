@@ -5,9 +5,8 @@ import time
 
 def get_recommendations(song_matrix, model, n=10, pvar=None, window=None):
     songs = newdata_funcs.get_all_songs()
-    # my_song = model_funcs.song2matrix(newdata_funcs.most_freq_words(songs[song_index], n), model)
-    # total = len(songs)
-    total = 3000
+    total = len(songs)
+    # total = 3000  # for testing
     step = 1000
 
     lst = []
@@ -27,9 +26,9 @@ def get_recommendations(song_matrix, model, n=10, pvar=None, window=None):
             lst.append(float("inf"))
             continue
 
-        lst.append(algebra.mat_dist_sq(mat, song_matrix))
+        dist = algebra.mat_dist_sq(mat, song_matrix)
+        lst.append(dist)
 
-    list(filter((0).__ne__, lst))
     top10 = [lst.index(i) for i in sorted(lst)[:10]]
     pvar.set(100)
     return top10
